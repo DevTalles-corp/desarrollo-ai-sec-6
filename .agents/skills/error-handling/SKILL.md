@@ -74,3 +74,8 @@ El handler global responde por la excepción base: `NotFoundException` con 404 y
 **Cómo se verifica:** ninguno todavía.
 
 ## Qué evitar
+
+- No lanzar una excepción genérica, como `RuntimeException`, en lugar de una excepción propia de la feature. Las excepciones del dominio expresan qué falló y permiten que el handler responda con el código correcto.
+- No elegir el código HTTP dentro de la excepción con `@ResponseStatus` ni usar `ResponseStatusException`. El código de estado lo determina la excepción base en `shared.error` y el handler global.
+- No devolver `null` ni un `Optional` vacío hasta el controller para que este arme el 404. El service detecta la ausencia o el error de negocio y lanza la excepción correspondiente.
+- No mostrarle al cliente detalles técnicos en el `detail`, como la traza, el nombre de una clase o una consulta SQL. Esa información se registra en el log, y el cliente recibe solo el mensaje de la excepción o, en un error inesperado, el mensaje genérico del 500.
